@@ -1,19 +1,39 @@
-from django.contrib.auth import forms as admin_forms
+from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
 
-class UserChangeForm(admin_forms.UserChangeForm):
-    class Meta(admin_forms.UserChangeForm.Meta):
+class UserChangeForm(UserChangeForm):
+    class Meta:
         model = User
+        fields = ("email",)
 
 
-class UserCreationForm(admin_forms.UserCreationForm):
-    class Meta(admin_forms.UserCreationForm.Meta):
+class UserCreationForm(UserCreationForm):
+    class Meta:
         model = User
+        fields = ("email",)
 
-        error_messages = {
-            "username": {"unique": _("This username has already been taken.")}
-        }
+        error_messages = {"email": {"unique": _("This email has already been taken.")}}
+
+
+class UserSignupForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("profile_type", "email", "password")
+
+    def clean_email(self):
+        # check if user exists with the email address
+        user_email = self.cleaned_data["email"]
+
+        try:
+            user = User.objects.get(email=user_email)
+            if user:
+                self.add_error("email", "An account with this email already exists")
+        except Exception:
+            pass
+
+        return user_email

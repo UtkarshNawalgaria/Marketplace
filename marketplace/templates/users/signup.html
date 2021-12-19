@@ -1,19 +1,15 @@
-{% extends "account/base.html" %} {% load i18n %} {% load crispy_forms_tags %}
-{% block head_title %}{% translate "Signup" %}{% endblock %} {% block inner %}
-<h1>{% translate "Sign Up" %}</h1>
+{% extends 'base.html' %}
 
-<p>
-  {% blocktranslate %}Already have an account? Then please
-  <a href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
-</p>
+{% block content %}
 
 <form
   class="signup"
   id="signup_form"
   method="post"
-  action="{% url 'account_signup' %}"
+  action="{% url 'user:signup' %}"
 >
-  {% csrf_token %} {% comment %} {{ form|crispy }} {% endcomment %}
+  {% csrf_token %}
+
   {{form.non_field_errors}}
   <div class="field">
     <label class="label" for="email">Email</label>
@@ -61,16 +57,6 @@
   </div>
   {{ form.profile_type }}
 
-  {% if redirect_field_value %}
-  <input
-    type="hidden"
-    name="{{ redirect_field_name }}"
-    value="{{ redirect_field_value }}"
-  />
-  {% endif %}
-  <button class="btn btn-primary" type="submit">
-    {% translate "Sign Up" %} &raquo;
-  </button>
+  <button class="btn btn-primary" type="submit">Signup</button>
 </form>
-
-{% endblock %}
+{% endblock content %}
