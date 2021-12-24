@@ -4,7 +4,6 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from phonenumber_field.modelfields import PhoneNumberField
 from users.manager import UserManager
 
 
@@ -19,7 +18,9 @@ class User(PermissionsMixin, AbstractBaseUser, BaseModel):
 
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     email = models.EmailField(_("User email"), max_length=255, unique=True)
-    phone = PhoneNumberField(_("User Phone Number"), unique=True, null=True)
+    phone = models.CharField(
+        _("User Phone Number"), max_length=10, unique=True, null=True
+    )
     profile_type = models.CharField(
         max_length=255, choices=UserType.choices, default=default_type
     )

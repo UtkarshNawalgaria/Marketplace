@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 import django.utils.timezone
-import phonenumber_field.modelfields
 
 
 class Migration(migrations.Migration):
@@ -25,7 +24,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(blank=True, max_length=255, verbose_name='Name of User')),
                 ('email', models.EmailField(max_length=255, unique=True, verbose_name='User email')),
-                ('phone', phonenumber_field.modelfields.PhoneNumberField(max_length=128, null=True, region=None, unique=True, verbose_name='User Phone Number')),
+                ('phone', models.CharField(max_length=10, null=True, unique=True, verbose_name='User Phone Number')),
                 ('profile_type', models.CharField(choices=[('Seller', 'SELLER'), ('Customer', 'CUSTOMER')], default='Customer', max_length=255)),
                 ('is_active', models.BooleanField(default=False)),
                 ('is_staff', models.BooleanField(default=False)),
