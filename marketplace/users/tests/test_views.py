@@ -35,7 +35,7 @@ class TestUserUpdateView:
 
         view.request = request
 
-        assert view.get_success_url() == f"/users/{user.username}/"
+        assert view.get_success_url() == f"/user/{user.id}/"
 
     def test_get_object(self, user: User, rf: RequestFactory):
         view = UserUpdateView()
@@ -73,8 +73,13 @@ class TestUserRedirectView:
         request.user = user
 
         view.request = request
+        redirect_url = (
+            "/core/customer/dashboard/"
+            if user.profile_type == User.UserType.CUSTOMER
+            else "/core/seller/dashboard/"
+        )
 
-        assert view.get_redirect_url() == f"/users/{user.username}/"
+        assert view.get_redirect_url() == redirect_url
 
 
 class TestUserDetailView:
@@ -82,7 +87,7 @@ class TestUserDetailView:
         request = rf.get("/fake-url/")
         request.user = UserFactory()
 
-        response = user_detail_view(request, username=user.username)
+        response = user_detail_view(request, id=user.id)
 
         assert response.status_code == 200
 
@@ -90,7 +95,7 @@ class TestUserDetailView:
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
-        response = user_detail_view(request, username=user.username)
+        response = user_detail_view(request, id=user.id)
         login_url = reverse(settings.LOGIN_URL)
 
         assert response.status_code == 302

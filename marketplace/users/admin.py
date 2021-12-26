@@ -1,11 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from marketplace.users.forms import UserChangeForm, UserCreationForm
-
-User = get_user_model()
+from marketplace.users.models import User
 
 
 @admin.register(User)
@@ -13,6 +11,7 @@ class UserAdmin(auth_admin.UserAdmin):
 
     form = UserChangeForm
     add_form = UserCreationForm
+    model = User
     fieldsets = (
         (_("Personal info"), {"fields": ("name", "email", "phone", "profile_type")}),
         (None, {"fields": ("password",)}),
@@ -29,6 +28,21 @@ class UserAdmin(auth_admin.UserAdmin):
             },
         ),
         (_("Important dates"), {"fields": ("last_login",)}),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "email",
+                    "password1",
+                    "password2",
+                    "profile_type",
+                    "is_staff",
+                ),
+            },
+        ),
     )
     list_display = ("email", "profile_type", "is_superuser")
     search_fields = (

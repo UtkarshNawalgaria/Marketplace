@@ -39,7 +39,7 @@
                 <a class="button is-light" href="#"> Log in </a>
             </div>
         {% else %}
-            <p>Hello, {{ request.user.username }}</p>
+            <p>Hello, {{ request.user.email }}</p>
             <div class="buttons">
                 <a href="{% url 'user:detail' request.user.id %}" class="button">My Profile</a>
                 <a href="{% url 'user:logout' %}" class="button is-danger">Sign Out</a>
