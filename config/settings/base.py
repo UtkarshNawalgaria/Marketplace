@@ -64,8 +64,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "marketplace.users.apps.UsersConfig",
     "marketplace.core.apps.CoreConfig",
+    "marketplace.users.apps.UsersConfig",
+    "marketplace.product.apps.ProductConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
