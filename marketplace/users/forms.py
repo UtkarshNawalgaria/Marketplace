@@ -23,17 +23,13 @@ class UserCreationForm(UserCreationForm):
 class UserSignupForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("profile_type", "email", "password")
+        fields = ("email", "password")
 
     def clean_email(self):
-        # check if user exists with the email address
         user_email = self.cleaned_data["email"]
+        user = User.objects.filter(email=user_email)
 
-        try:
-            user = User.objects.get(email=user_email)
-            if user:
-                self.add_error("email", "An account with this email already exists")
-        except Exception:
-            pass
+        if user.exists():
+            self.add_error("email", "Account with this email already exists")
 
         return user_email

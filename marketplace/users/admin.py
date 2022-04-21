@@ -13,7 +13,7 @@ class UserAdmin(auth_admin.UserAdmin):
     add_form = UserCreationForm
     model = User
     fieldsets = (
-        (_("Personal info"), {"fields": ("name", "email", "phone", "profile_type")}),
+        (_("Personal info"), {"fields": ("name", "email", "phone")}),
         (None, {"fields": ("password",)}),
         (
             _("Permissions"),
@@ -38,13 +38,12 @@ class UserAdmin(auth_admin.UserAdmin):
                     "email",
                     "password1",
                     "password2",
-                    "profile_type",
                     "is_staff",
                 ),
             },
         ),
     )
-    list_display = ("email", "profile_type", "is_superuser")
+    list_display = ("email", "is_superuser")
     search_fields = (
         "email",
         "phone",
