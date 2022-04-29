@@ -44,6 +44,7 @@ Pillow = "==8.3.2"
 Django = "==3.1.13"
 Werkzeug = "==1.0.1"
 pyotp = "*"
+click = "*"
 
 [dev-packages]
 
