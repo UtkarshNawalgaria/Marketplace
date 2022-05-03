@@ -15,5 +15,5 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
 
     list_display = ("name", "slug", "activated_at")
-    fields = ("name", "category")
+    fields = ("name", "sku", "category", "description")
     readonly_fields = ("activated_at", "created_at", "updated_at")

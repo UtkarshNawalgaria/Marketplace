@@ -1,25 +1,35 @@
 from django.contrib.auth import get_user_model
-from django.http.response import HttpResponseForbidden
-from django.shortcuts import redirect, render
 
-from marketplace.product.forms import CategoryForm
-from marketplace.product.models import Category
+from rest_framework.viewsets import ModelViewSet
+
+from marketplace.product.mixins import StaffUserPermissionMixin
+from marketplace.product.models import Category, Product
+from marketplace.product.serializers import CategorySerializer, ProductSerializer
 
 User = get_user_model()
 
 
-def create_category(request):
-    context = {}
-    user = request.user
+class ProductViewSet(ModelViewSet, StaffUserPermissionMixin):
+    queryset = Product.active.all().prefetch_related("category")
+    serializer_class = ProductSerializer
+    lookup_field = "slug"
 
-    if not (user.is_authenticated() and user.is_superuser):
-        raise HttpResponseForbidden("You are not authorized to call this method.")
+    def get_queryset(self):
+        """
+        Returns the list of products based on the following conditions
 
-    if request.method == "POST":
-        form = CategoryForm(request.POST or None)
+        1. If User is not a staff, only return Products that are active.
+        2. If User is authenticated and is a staff, return all products.
+        """
 
-        if form.is_valid():
-            form.save()
+        # If user is admin, send all products
+        if self.request.user.is_authenticated and self.request.user.is_staff:
+            return Product.objects.all().prefetch_related("category")
 
-    context["form"] = CategoryForm()
-    return render(request, "", context)
+        return super().get_queryset()
+
+
+class CategoryViewSet(ModelViewSet, StaffUserPermissionMixin):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    lookup_field = "slug"

@@ -1,9 +1,13 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from django_extensions.db.fields import AutoSlugField
+from rest_framework.exceptions import ValidationError
 
 from marketplace.core.models import BaseModel
 from marketplace.product.managers import ActiveProductManager, ProductManager
+
+User = get_user_model()
 
 
 class Category(BaseModel):
@@ -12,12 +16,27 @@ class Category(BaseModel):
     slug = AutoSlugField(populate_from="name", unique=True)
     activated_at = models.DateTimeField(null=True)
 
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
+    def save(self, *args, **kwargs) -> None:
+
+        created = not self.pk
+
+        if created:
+
+            if not self.created_by or (
+                self.created_by and not self.created_by.is_staff
+            ):
+                raise ValidationError("Not allowed to create category.")
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"Category<name='{self.name}'>"
+        return f"Category(name={self.name})"
 
     def active_products(self):
         return Product.active.filter(category=self)
@@ -33,15 +52,30 @@ class Product(BaseModel):
 
     activated_at = models.DateTimeField(null=True)
 
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
     objects = ProductManager()
     active = ActiveProductManager()
 
     def __str__(self):
-        return f"Product<name='{self.name}'>"
+        return f"Product(name={self.name}, sku={self.sku})"
 
     @property
     def categories(self):
         return self.category.all()
+
+    def save(self, *args, **kwargs) -> None:
+
+        created = not self.pk
+
+        if created:
+
+            if not self.created_by or (
+                self.created_by and not self.created_by.is_staff
+            ):
+                raise ValidationError("Not allowed to create new product.")
+
+        super().save(*args, **kwargs)
 
 
 class ProductInventory(BaseModel):
