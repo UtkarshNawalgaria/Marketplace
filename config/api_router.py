@@ -1,15 +1,14 @@
-from django.conf import settings
-from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework.routers import DefaultRouter
 
-from marketplace.users.api.views import UserViewSet
-
-if settings.DEBUG:
-    router = DefaultRouter()
-else:
-    router = SimpleRouter()
-
-router.register("users", UserViewSet)
-
+from marketplace.product.views import CategoryViewSet, ProductViewSet
+from marketplace.users.views import UserViewSet
 
 app_name = "api"
+router = DefaultRouter()
+
+router.register("users", UserViewSet)
+router.register("category", CategoryViewSet)
+router.register("products", ProductViewSet)
+
+
 urlpatterns = router.urls

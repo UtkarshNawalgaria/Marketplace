@@ -53,12 +53,15 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "crispy_forms",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
+    # Authentication apps
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
     "corsheaders",
 ]
 
@@ -81,8 +84,9 @@ AUTHENTICATION_BACKENDS = [
     # "allauth.account.auth_backends.AuthenticationBackend",
 ]
 AUTH_USER_MODEL = "users.User"
-LOGIN_REDIRECT_URL = "user:redirect"
-LOGIN_URL = "user:signup"
+LOGIN_REDIRECT_URL = "api:product:product-list-create"
+LOGIN_URL = "rest_framework:login"
+SIGNUP_REDIRECT_URL = "rest_framework:login"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -237,11 +241,11 @@ ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "email"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_ADAPTER = "marketplace.users.adapters.AccountAdapter"
-SOCIALACCOUNT_ADAPTER = "marketplace.users.adapters.SocialAccountAdapter"
+# SOCIALACCOUNT_ADAPTER = "marketplace.users.adapters.SocialAccountAdapter"
 ACCOUNT_FORMS = {"signup": "marketplace.users.forms.UserRegistrationForm"}
 
 # django-rest-framework
@@ -251,7 +255,11 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "marketplace.users.serializers.UserRegistrationSerializer"
 }
 
 # django-cors-headers

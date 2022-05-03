@@ -3,29 +3,22 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
-from django.views.generic import TemplateView
+
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path(
-        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
-    ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # User management
-    path("user/", include("marketplace.users.urls", namespace="user")),
-    # Your stuff: custom urls includes go here
-    path("core/", include("marketplace.core.urls", namespace="core")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# API URLS
-urlpatterns += [
-    # API base url
-    path("api/", include("config.api_router")),
+    # API Urls
+    path("api/v1/", include("config.api_router")),
+    # Auth URLs
+    path("api-auth/", include("rest_framework.urls")),
+    path("api/v1/auth/", include("dj_rest_auth.urls")),
+    path("api/v1/auth/register/", include("dj_rest_auth.registration.urls")),
     # DRF auth token
     path("auth-token/", obtain_auth_token),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
