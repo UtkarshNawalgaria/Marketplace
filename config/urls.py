@@ -16,7 +16,7 @@ urlpatterns = [
     path("api/v1/auth/", include("dj_rest_auth.urls")),
     path("api/v1/auth/register/", include("dj_rest_auth.registration.urls")),
     # DRF auth token
-    path("auth-token/", obtain_auth_token),
+    path("api/v1/auth-token/", obtain_auth_token),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

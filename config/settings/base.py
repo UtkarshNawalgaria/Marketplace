@@ -252,10 +252,8 @@ ACCOUNT_FORMS = {"signup": "marketplace.users.forms.UserRegistrationForm"}
 # -------------------------------------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
@@ -264,5 +262,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 # django-cors-headers
 CORS_URLS_REGEX = r"^/api/.*$"
+CORS_ALLOW_ALL_ORIGINS = True
 # Your stuff...
 # ------------------------------------------------------------------------------
