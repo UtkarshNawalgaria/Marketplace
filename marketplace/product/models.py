@@ -3,6 +3,7 @@ from django.db import models
 
 from django_extensions.db.fields import AutoSlugField
 from rest_framework.exceptions import ValidationError
+from versatileimagefield.fields import PPOIField, VersatileImageField
 
 from marketplace.core.models import BaseModel
 from marketplace.product.managers import ActiveProductManager, ProductManager
@@ -11,10 +12,18 @@ User = get_user_model()
 
 
 class Category(BaseModel):
+    def upload_path(instance, filename):
+        return f"categories/{instance.id}/{filename}"
 
     name = models.CharField(max_length=100)
     slug = AutoSlugField(populate_from="name", unique=True)
     activated_at = models.DateTimeField(null=True)
+
+    ppoi = PPOIField("Image PPOI")
+    background_image = VersatileImageField(
+        upload_to=upload_path, ppoi_field="ppoi", null=True, blank=True
+    )
+    image_alt_text = models.CharField(max_length=128, null=True, blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
@@ -76,6 +85,25 @@ class Product(BaseModel):
                 raise ValidationError("Not allowed to create new product.")
 
         super().save(*args, **kwargs)
+
+
+class ProductMedia(BaseModel):
+    def upload_path(instance, filename):
+        return f"products/{instance.product.id}/{filename}"
+
+    product = models.ForeignKey(
+        Product, on_delete=models.SET_NULL, null=True, blank=True, related_name="media"
+    )
+
+    ppoi = PPOIField("Image PPOI")
+    image = VersatileImageField(
+        upload_to=upload_path, ppoi_field="ppoi", null=True, blank=True
+    )
+    image_alt_text = models.CharField(max_length=128, blank=True)
+
+    class Meta:
+        verbose_name = "Product Media"
+        verbose_name_plural = "Product Media"
 
 
 class ProductInventory(BaseModel):
