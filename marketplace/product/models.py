@@ -47,7 +47,7 @@ class Product(BaseModel):
     name = models.CharField(max_length=200)
     sku = models.CharField(max_length=100, unique=True)
     slug = AutoSlugField(populate_from="name", unique=True)
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=500, null=True, blank=True)
     category = models.ManyToManyField("Category", related_name="products")
 
     activated_at = models.DateTimeField(null=True)
