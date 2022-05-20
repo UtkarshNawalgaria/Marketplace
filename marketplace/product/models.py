@@ -73,12 +73,11 @@ class Product(BaseModel):
     def categories(self):
         return self.category.all()
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs):
 
         created = not self.pk
 
         if created:
-
             if not self.created_by or (
                 self.created_by and not self.created_by.is_staff
             ):
