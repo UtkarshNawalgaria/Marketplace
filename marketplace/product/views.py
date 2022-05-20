@@ -4,14 +4,17 @@ from rest_framework.viewsets import ModelViewSet
 
 from marketplace.product.mixins import StaffUserPermissionMixin
 from marketplace.product.models import Category, Product
-from marketplace.product.serializers import CategorySerializer, ProductSerializer
+from marketplace.product.serializers import (
+    CategorySerializer,
+    ProductDetailSerializer,
+    ProductListSerializer,
+)
 
 User = get_user_model()
 
 
 class ProductViewSet(ModelViewSet, StaffUserPermissionMixin):
     queryset = Product.active.all().prefetch_related("category")
-    serializer_class = ProductSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -27,6 +30,13 @@ class ProductViewSet(ModelViewSet, StaffUserPermissionMixin):
             return Product.objects.all().prefetch_related("category")
 
         return super().get_queryset()
+
+    def get_serializer_class(self):
+
+        if self.action == "list":
+            return ProductListSerializer
+
+        return ProductDetailSerializer
 
 
 class CategoryViewSet(ModelViewSet, StaffUserPermissionMixin):
