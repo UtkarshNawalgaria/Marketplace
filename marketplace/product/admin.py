@@ -18,8 +18,8 @@ class ProductMediaInline(admin.TabularInline):
 class CategoryAdmin(admin.ModelAdmin):
 
     list_display = ("name", "slug", "activated_at")
-    fields = ("name", "background_image", "image_alt_text")
-    readonly_fields = ("activated_at", "created_at", "updated_at")
+    fields = ("name", "slug", "background_image", "image_alt_text")
+    readonly_fields = ("slug", "activated_at", "created_at", "updated_at")
 
 
 @admin.register(Product)

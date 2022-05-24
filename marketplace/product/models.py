@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.text import slugify
 
 from django_extensions.db.fields import AutoSlugField
 from rest_framework.exceptions import ValidationError
@@ -31,12 +32,12 @@ class Category(BaseModel):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs):
 
         created = not self.pk
+        self.slug = slugify(self.name)
 
         if created:
-
             if not self.created_by or (
                 self.created_by and not self.created_by.is_staff
             ):
