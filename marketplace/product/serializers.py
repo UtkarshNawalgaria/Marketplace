@@ -13,6 +13,7 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = (
             "id",
+            "slug",
             "name",
             "url",
         )
@@ -49,7 +50,7 @@ class ProductDetailMediaSerializer(serializers.ModelSerializer):
 
 
 class AbstractProductSerializer(serializers.ModelSerializer):
-    categories = ProductCategorySerializer(many=True, read_only=True)
+    categories = ProductCategorySerializer(many=True)
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     url = serializers.HyperlinkedIdentityField(
         lookup_field="slug", view_name="api:product-detail"
@@ -80,3 +81,31 @@ class ProductDetailSerializer(AbstractProductSerializer):
 
     class Meta(AbstractProductSerializer.Meta):
         fields = AbstractProductSerializer.Meta.fields + ("media",)
+
+    def create(self, validated_data):
+        categories = validated_data.pop("categories")
+        category_models = []
+
+        # Create new category or get the already saved category
+        for category in categories:
+            if not category:
+                continue
+
+            cat_name = category.get("name").lower()
+            category_objs = Category.objects.filter(name__iexact=cat_name)
+
+            if category_objs.exists():
+                category_models.append(category_objs.first())
+            else:
+                # Create new category
+                new_category = Category.objects.create(
+                    name=category.get("name"),
+                    created_by=validated_data.get("created_by"),
+                )
+                category_models.append(new_category)
+
+        # create new product instance with the required categories
+        new_product = Product.objects.create(**validated_data)
+        new_product.category.add(*category_models)
+
+        return new_product

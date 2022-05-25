@@ -13,8 +13,7 @@ from marketplace.product.serializers import (
 User = get_user_model()
 
 
-class ProductViewSet(ModelViewSet, StaffUserPermissionMixin):
-    queryset = Product.active.all().prefetch_related("category")
+class ProductViewSet(StaffUserPermissionMixin, ModelViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -29,7 +28,7 @@ class ProductViewSet(ModelViewSet, StaffUserPermissionMixin):
         if self.request.user.is_authenticated and self.request.user.is_staff:
             return Product.objects.all().prefetch_related("category")
 
-        return super().get_queryset()
+        return Product.active.all().prefetch_related("category")
 
     def get_serializer_class(self):
 
@@ -39,7 +38,7 @@ class ProductViewSet(ModelViewSet, StaffUserPermissionMixin):
         return ProductDetailSerializer
 
 
-class CategoryViewSet(ModelViewSet, StaffUserPermissionMixin):
+class CategoryViewSet(StaffUserPermissionMixin, ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = "slug"
