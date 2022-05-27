@@ -25,7 +25,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
-    list_display = ("name", "slug", "activated_at")
-    fields = ("name", "sku", "category", "description")
+    list_display = ("name", "retail_price", "slug", "activated_at")
+    fields = ("name", "sku", "category", "description", "retail_price", "sale_price")
     readonly_fields = ("activated_at", "created_at", "updated_at")
     inlines = [ProductMediaInline]

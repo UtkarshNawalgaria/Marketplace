@@ -60,6 +60,18 @@ class Product(BaseModel):
     description = models.TextField(max_length=500, null=True, blank=True)
     category = models.ManyToManyField("Category", related_name="products")
 
+    retail_price = models.DecimalField(
+        verbose_name="Price", max_digits=10, decimal_places=2, default=0
+    )
+    sale_price = models.DecimalField(
+        verbose_name="Sale Price",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+
     activated_at = models.DateTimeField(null=True)
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
